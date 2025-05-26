@@ -73,9 +73,30 @@
       display: none;
     }
 
+    .progress-container {
+      height: 10px;
+      background: #ddd;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #5a2a83, #b88de3);
+      transition: width 0.6s ease;
+    }
+
+    .question-number {
+      font-weight: 600;
+      color: #4b2a6b;
+      margin-bottom: 0.5rem;
+    }
+
     .question {
       font-size: 1.4rem;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
       font-weight: 600;
       color: #4b2a6b;
       min-height: 70px;
@@ -166,6 +187,8 @@
   </div>
 
   <div class="quiz-container" id="quiz">
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="question-number" id="questionNumber"></div>
     <div class="question fade-in" id="question"></div>
     <div class="answers" id="answers"></div>
     <div class="result" id="result"></div>
@@ -197,9 +220,11 @@
     function mostrarPergunta() {
       const p = perguntas[atual];
       const questionEl = document.getElementById('question');
+      const questionNumber = document.getElementById('questionNumber');
       const answersEl = document.getElementById('answers');
       const resultEl = document.getElementById('result');
       const restartBtn = document.getElementById('restartBtn');
+      const progressBar = document.getElementById('progressBar');
 
       resultEl.style.display = 'none';
       restartBtn.style.display = 'none';
@@ -211,6 +236,9 @@
 
       setTimeout(() => {
         questionEl.textContent = p.q;
+        questionNumber.textContent = `Pergunta ${atual + 1} de ${perguntas.length}`;
+        progressBar.style.width = `${((atual) / perguntas.length) * 100}%`;
+
         questionEl.classList.remove('fade-out');
         questionEl.classList.add('fade-in');
 
@@ -253,16 +281,21 @@
       const res = document.getElementById('result');
       const answersEl = document.getElementById('answers');
       const questionEl = document.getElementById('question');
+      const questionNumber = document.getElementById('questionNumber');
       const restartBtn = document.getElementById('restartBtn');
+      const progressBar = document.getElementById('progressBar');
 
       answersEl.style.display = 'none';
       questionEl.style.display = 'none';
+      questionNumber.style.display = 'none';
       res.style.display = 'block';
       restartBtn.style.display = 'inline-block';
+      progressBar.style.width = `100%`;
 
       let mensagem = `Você acertou ${pontos} de ${perguntas.length}!\n`;
-      if (pontos >= 8) mensagem += "✨ Incrível! Você é um mestre Disney!";
-      else if (pontos >= 5) mensagem += "🌟 Muito bem! Mas ainda há magia para descobrir!";
+      if (pontos === 10) mensagem += "✨ Incrível! Você é praticamente um personagem da Disney!";
+      else if (pontos >= 7) mensagem += "🌟 Muito bem! A magia vive em você!";
+      else if (pontos >= 5) mensagem += "Você conhece bastante, mas ainda pode aprender mais!";
       else mensagem += "🌈 Continue assistindo, a magia virá com o tempo!";
 
       res.textContent = mensagem;
@@ -271,6 +304,9 @@
     function reiniciarQuiz() {
       atual = 0;
       pontos = 0;
+      document.getElementById('questionNumber').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('restartBtn').style.display = 'none';
       mostrarPergunta();
     }
 
